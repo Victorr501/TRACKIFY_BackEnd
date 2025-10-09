@@ -6,4 +6,5 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
     def __init__(self):
         super().__init__(User)
         
-    
+    def get_by_email(self, db, email: str):
+        return db.query(self.model).filter(self.model.email == email).first()

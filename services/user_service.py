@@ -4,8 +4,10 @@ from db.models.user import User
 from schemas.user_schema import UserCreate, UserUpdate
 from sqlalchemy.orm import Session
 
-class UserService(BaseService[User, UserCreate, UserCreate]):
+class UserService(BaseService[User, UserCreate, UserUpdate]):
     def __init__(self):
+        self.repository: UserRepository = UserRepository()
         super().__init__(UserRepository())
         
-    
+    def get_by_email(self, db: Session, email: str):
+        return self.repository.get_by_email(db, email)

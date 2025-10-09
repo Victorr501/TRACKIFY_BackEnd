@@ -5,6 +5,7 @@ from db.session import get_db
 from services.base_service import BaseService
 from pydantic import BaseModel
 from db.base import Base
+from core.dependencies import get_current_user
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -13,7 +14,11 @@ ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
 
 class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType, ReadSchemaType]):
     def __init__(self, service: BaseService, model_name: str ):
-        self.router = APIRouter(prefix=f"/{model_name}", tags=[model_name.capitalize()])
+        self.router = APIRouter(
+            prefix=f"/{model_name}", 
+            tags=[model_name.capitalize()],
+            dependencies=[Depends(get_current_user)]
+        )
         self.service = service
 
         @self.router.get("/{item_id}", response_model=ReadSchemaType)
