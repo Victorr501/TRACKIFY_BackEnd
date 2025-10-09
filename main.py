@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from db.base import Base
 from db.session import engine 
-from db.models import user
+from db.models import user, habits, habit_log, reminder
 
 #Crea tablas automaitcamente al inicaira
 @asynccontextmanager

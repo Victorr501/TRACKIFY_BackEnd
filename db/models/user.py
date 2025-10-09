@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from db.base import Base
 
@@ -22,4 +23,7 @@ class User(Base):
     last_login = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     update_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    #Relaciones
+    habits = relationship("Habit", back_populates="user", cascade="all, delete-orphan")
     
