@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.session import get_db
 from services.auth_service import AuthService
+from core.security import decode_access_token
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 auth_service = AuthService()
@@ -10,10 +11,11 @@ auth_service = AuthService()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 @router.post("/register")
-def register_user(username: str, email: str, password: str, db: Session = Depends(get_db)):
+def register_user(username: str = Form(...), email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     try:
         user = auth_service.register_user(db, username, email, password)
-        return {"message": "User registrado perfectamente", "user_id" : user.id}
+        token = auth_service.generate_token(user.id, user.username)
+        return {"access_token": token, "token_type" : "beaber"}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
@@ -27,8 +29,7 @@ def login(from_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @router.get("/me")
 def get_me(token: str = Depends(oauth2_scheme)):
-    from core.security import decode_access_toke
-    data = decode_access_toke(token)
+    data = decode_access_token(token)
     if not data:
         raise HTTPException(status_code=401, detail="Invalid token")
     return {"user": data}
