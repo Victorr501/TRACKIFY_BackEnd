@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException, Form, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.session import get_db
 from services.auth_service import AuthService
 from core.security import decode_access_token
+
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 auth_service = AuthService()
@@ -33,3 +34,13 @@ def get_me(token: str = Depends(oauth2_scheme)):
     if not data:
         raise HTTPException(status_code=401, detail="Invalid token")
     return {"user": data}
+
+@router.post("/logout")
+def logout_user(authorization: str = Header(...), db: Session = Depends(get_db)):
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token inválido")
+    
+    token = authorization.split(" ")[1]
+    return auth_service.logout_user(db, token)
+    
+    

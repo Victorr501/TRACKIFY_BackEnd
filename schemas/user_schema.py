@@ -18,9 +18,14 @@ class UserUpdate(BaseModel):
     bio: Optional[str] = None
     timezone: Optional[str] = None
     notifications_enable: Optional[bool] = None
+    is_active: Optional[bool] = None
+    last_login: Optional[datetime] = None
+    update_at: Optional[datetime] = None    
+    
     
 class UserRead(UserBase):
     id: int
+    username: str
     streak_count: int
     max_streak: int
     notifications_enable: bool
