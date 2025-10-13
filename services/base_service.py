@@ -28,5 +28,5 @@ class BaseService(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return self.repository.update(db, db_obj, obj_in)
     
     def delete(self, db:Session, id: int ) -> bool:
-        return self.delete(db, id)
+        return self.repository.delete(db, id)
         

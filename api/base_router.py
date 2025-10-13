@@ -13,35 +13,48 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
 
 class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType, ReadSchemaType]):
-    def __init__(self, service: BaseService, model_name: str ):
+    def __init__(
+        self, 
+        service: BaseService, 
+        model_name: str,
+        read_schema: Type[ReadSchemaType],
+        create_schema: Type[CreateSchemaType],
+        update_schema: Type[UpdateSchemaType],):
         self.router = APIRouter(
             prefix=f"/{model_name}", 
             tags=[model_name.capitalize()],
             dependencies=[Depends(get_current_user)]
         )
+        
         self.service = service
+        self.read_schema = read_schema
+        self.create_schema = create_schema
+        self.update_schema = update_schema
 
         @self.router.get("/{item_id}", response_model=ReadSchemaType)
         def get_one(item_id: int, db: Session = Depends(get_db)):
             obj = self.service.get(db, item_id)
             if not obj:
                 raise HTTPException(status_code=404, detail=f"{model_name.capitalize()} not found")
-            return obj
+            return self.read_schema.model_validate(obj)
+        
         
         @self.router.get("/", response_model=List[ReadSchemaType])
         def get_all(db: Session = Depends(get_db)):
-            return self.service.get_all(db)
+            obj = self.service.get_all(db)
+            return self.read_schema.model_validate(obj)
         
         @self.router.post("/", response_model=ReadSchemaType)
         def create(item: CreateSchemaType, db: Session = Depends(get_db)):
-            return self.service.create(db, item)
+            obj =  self.service.create(db, item)
+            return self.read_schema.model_validate(obj)
         
         @self.router.put("/{item_id}", response_model=ReadSchemaType)
-        def update(item_id: int, item: UpdateSchemaType, db: Session = Depends(get_all)):
+        def update(item_id: int, item: UpdateSchemaType, db: Session = Depends(get_db)):
             update = self.service.update(db, item_id, item)
             if not update:
                 raise HTTPException(status_code=404, detail=f"{model_name.capitalize()} not found")
-            return update
+            return self.read_schema.model_validate(update)
         
         @self.router.delete("/{item_id}")
         def delete(item_id: int, db: Session = Depends(get_db)):

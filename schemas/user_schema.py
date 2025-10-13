@@ -25,7 +25,6 @@ class UserUpdate(BaseModel):
     
 class UserRead(UserBase):
     id: int
-    username: str
     streak_count: int
     max_streak: int
     notifications_enable: bool
@@ -33,6 +32,5 @@ class UserRead(UserBase):
     last_login: Optional[datetime] = None
     created_at: datetime
     update_at: datetime
-    
     class Config:
         from_attributes = True

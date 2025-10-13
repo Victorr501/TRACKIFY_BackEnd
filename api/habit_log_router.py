@@ -8,5 +8,8 @@ from db.session import get_db
 habit_log_service = HabitLogService()
 habit_log_router = BaseRouter[HabitLog, HabitLogCreate, HabitLogUpdate, HabitLogRead](
     service=habit_log_service,
-    model_name="habit_logs"
+    model_name="habit_logs",
+    read_schema=HabitLogRead,
+    create_schema=HabitLogCreate,
+    update_schema=HabitLogUpdate
 ).router

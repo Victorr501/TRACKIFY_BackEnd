@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 class UserService(BaseService[User, UserCreate, UserUpdate]):
     def __init__(self):
-        self.repository: UserRepository = UserRepository()
+        respository = UserRepository()
         super().__init__(UserRepository())
         
     def get_by_email(self, db: Session, email: str):
