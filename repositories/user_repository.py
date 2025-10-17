@@ -8,3 +8,14 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         
     def get_by_email(self, db, email: str):
         return db.query(self.model).filter(self.model.email == email).first()
+    
+    def change_password(self, db, user_id: int, new_password_hash: str):
+        user = db.query(self.model).filter(self.model.id == user_id).first()
+        if not user:
+            return None, "Usuario no encontrado"
+        
+        user.password = new_password_hash
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user

@@ -1,7 +1,11 @@
 from api.base_router import BaseRouter
 from services.user_service import UserService
 from db.models.user import User
-from schemas.user_schema import UserCreate, UserUpdate, UserRead
+from db.session import get_db
+from schemas.user_schema import UserCreate, UserUpdate, UserRead, UserPasswordUpdate
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from core.dependencies import get_current_user
 
 user_service = UserService()
 user_router = BaseRouter[User, UserCreate, UserUpdate, UserRead](
@@ -12,3 +16,10 @@ user_router = BaseRouter[User, UserCreate, UserUpdate, UserRead](
     update_schema=UserUpdate
     
 ).router
+
+@user_router.put("/{user_id}/password")
+def change_user_password(user_id: int, data: UserPasswordUpdate, db: Session = Depends(get_db)):
+    user = user_service.change_password(db, user_id, data.old_password, data.new_password)
+    return user
+
+    

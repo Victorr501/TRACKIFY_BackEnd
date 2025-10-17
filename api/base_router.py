@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Generic, TypeVar, Type, List
 from db.session import get_db
@@ -50,8 +50,10 @@ class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType, ReadSche
             return self.read_schema.model_validate(obj)
         
         @self.router.put("/{item_id}", response_model=ReadSchemaType)
-        def update(item_id: int, item: UpdateSchemaType, db: Session = Depends(get_db)):
-            update = self.service.update(db, item_id, item)
+        def update(item_id: int, item: dict = Body(...), db: Session = Depends(get_db)):
+            validated_item = self.update_schema.model_validate(item)
+            print(validated_item)
+            update = self.service.update(db, item_id, validated_item)
             if not update:
                 raise HTTPException(status_code=404, detail=f"{model_name.capitalize()} not found")
             return self.read_schema.model_validate(update)
