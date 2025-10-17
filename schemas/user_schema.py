@@ -41,3 +41,6 @@ class UserRead(UserBase):
 class UserPasswordUpdate(BaseModel):
     old_password: str
     new_password: str
+    
+class UserDelete(BaseModel):
+    password: str

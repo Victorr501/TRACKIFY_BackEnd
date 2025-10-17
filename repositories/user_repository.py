@@ -19,3 +19,4 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         db.commit()
         db.refresh(user)
         return user
+    

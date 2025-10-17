@@ -22,3 +22,13 @@ class UserService(BaseService[User, UserCreate, UserUpdate]):
         user = self.repository.change_password(db,user_id, password_hash)
         
         return user
+    
+    def delete_user(self, db, user_id: int, password: str):
+        userdb = self.repository.get(db, user_id)
+        if not userdb:
+            return False
+        if not verify_password(password, userdb.password):
+            return False
+        
+        ok = self.repository.delete(db, userdb.id)
+        return ok
