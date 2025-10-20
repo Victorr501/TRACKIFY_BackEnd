@@ -7,3 +7,4 @@ class HabitService(BaseService[Habit, HabitCreate, HabitUpdate]):
     def __init__(self):
         repository = HabitRepository()
         super().__init__(repository)
+        
