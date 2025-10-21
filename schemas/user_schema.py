@@ -21,6 +21,8 @@ class UserUpdate(BaseModel):
     is_active: Optional[bool] = Field(None)
     last_login: Optional[datetime] = Field(None)
     update_at: Optional[datetime] = Field(None)
+    streak_count: Optional[int] = Field(None)
+    max_streak: Optional[int] = Field(None)
 
     class Config:
         from_attributes = True
