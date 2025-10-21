@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from typing import Generic, TypeVar, Type, List
 from db.session import get_db
 from services.base_service import BaseService
@@ -48,8 +49,12 @@ class BaseRouter(Generic[ModelType, CreateSchemaType, UpdateSchemaType, ReadSche
         def create(request_body: dict = Body(...), db: Session = Depends(get_db)):
             data = request_body.model_dump() if isinstance(request_body, BaseModel) else request_body
             item = self.create_schema(**data)
-            obj =  self.service.create(db, item)
-            return self.read_schema.model_validate(obj, from_attributes=True)
+            try: 
+                obj =  self.service.create(db, item)
+                return self.read_schema.model_validate(obj, from_attributes=True)
+            except IntegrityError as e:
+                raise HTTPException(status_code=400, detail="Este hábito ya fue completado hoy")
+                
         
         @self.router.put("/{item_id}", response_model=ReadSchemaType)
         def update(item_id: int, item: dict = Body(...), db: Session = Depends(get_db)):
