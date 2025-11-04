@@ -20,6 +20,9 @@ class User(Base):
     notifications_enable = Column(Boolean, default=True)
     is_active = Column(Boolean, default=True)
     
+    fcm_token = Column(String(255), nullable=True)
+
+    
     last_login = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     update_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

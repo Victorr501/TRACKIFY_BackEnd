@@ -11,6 +11,7 @@ class UserBase(BaseModel):
     
 class UserCreate(UserBase):
     password: str
+    fcm_token: Optional[str] = None
     
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None)
@@ -23,6 +24,7 @@ class UserUpdate(BaseModel):
     update_at: Optional[datetime] = Field(None)
     streak_count: Optional[int] = Field(None)
     max_streak: Optional[int] = Field(None)
+    fcm_token: Optional[str] = Field(None)
 
     class Config:
         from_attributes = True
