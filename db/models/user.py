@@ -22,7 +22,6 @@ class User(Base):
     
     fcm_token = Column(String(255), nullable=True)
 
-    
     last_login = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     update_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

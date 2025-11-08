@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Optional
 from sqlalchemy.orm import Session
 from core.security import verify_password, get_password_hash, create_access_token, decode_access_token
 from repositories.user_repository import UserRepository
@@ -11,20 +12,24 @@ class AuthService:
     def __init__(self):
         self.user_repo = UserRepository()
         
-    def register_user(self, db: Session, username: str, email: str, password: str):
+    def register_user(self, db: Session, username: str, email: str, password: str, fcm_token: Optional[str] = None ):
         existing = self.user_repo.get_by_email(db, email)
         if existing:
             raise ValueError("Email already registered")
         
         hashed_password = get_password_hash(password)
-        user_data = UserCreate(username=username, email= email, password= hashed_password)
+        user_data = UserCreate(username=username, email= email, password= hashed_password, fcm_token=fcm_token)
         return self.user_repo.create(db,user_data)
     
-    def authenticate_user(self, db: Session, email: str, password: str):
+    def authenticate_user(self, db: Session, email: str, password: str, fcm_token: Optional[str] = None ):
         user = self.user_repo.get_by_email(db, email)
         if not user or not verify_password(password, user.password):
             return None
-        update_user = UserUpdate(is_active=True)
+        update_user = UserUpdate(is_active=True, last_login=datetime.utcnow())
+        
+        if fcm_token and fcm_token != getattr(user, "fcm_token", None):
+            update_user.fcm_token = fcm_token
+        
         user = self.user_repo.update(db, user, update_user)
         return user
     
