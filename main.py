@@ -7,7 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from db.base import Base
 from db.session import engine 
-from db.models import user, habits, habit_log, reminder
+from db.models import user, habits, habit_log, reminder, shared_streak
 from api.user_router import user_router
 from api.habit_router import habit_router
 from api.habit_log_router import habit_log_router

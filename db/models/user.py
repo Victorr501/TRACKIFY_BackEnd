@@ -26,4 +26,6 @@ class User(Base):
     
     #Relaciones
     habits = relationship("Habit", back_populates="user", cascade="all, delete-orphan")
+    shared_streaks_as_user1 = relationship("SharedStreak", foreign_keys="SharedStreak.user1_id", back_populates="user1", cascade="all, delete-orphan")
+    shared_streaks_as_user2 = relationship("SharedStreak", foreign_keys="SharedStreak.user2_id", back_populates="user2", cascade="all, delete-orphan")
     
