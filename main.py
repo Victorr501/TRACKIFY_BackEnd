@@ -12,6 +12,7 @@ from api.user_router import user_router
 from api.habit_router import habit_router
 from api.habit_log_router import habit_log_router
 from api.reminder_router import reminder_router
+from api.shared_streak_router import shared_streak_router
 from api.auth_router import router as auth_router
 
 
@@ -50,6 +51,7 @@ app.include_router(user_router)
 app.include_router(habit_router)
 app.include_router(habit_log_router)
 app.include_router(reminder_router)
+app.include_router(shared_streak_router)
 
 @app.get("/")
 def read_root():
