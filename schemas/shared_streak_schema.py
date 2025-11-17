@@ -6,6 +6,9 @@ class SharedStreakBase(BaseModel):
     current_streak: int = Field(default=0, ge=0)
     max_streak: int = Field(default=0, ge=0)
     last_day_checked: Optional[date] = None
+    user1_last_day: Optional[date] = None
+    user2_last_day: Optional[date] = None
+    
     
 class SharedStreakCreate(SharedStreakBase):
     user1_id: int
@@ -15,6 +18,8 @@ class SharedStreakUpdate(BaseModel):
     current_streak: Optional[int] = Field(default=None, ge=0)
     max_streak: Optional[int] = Field(default=None, ge=0)
     last_day_checked: Optional[date] = None
+    user1_last_day: Optional[date] = None
+    user2_last_day: Optional[date] = None
 
 
 class SharedStreakRead(SharedStreakBase):

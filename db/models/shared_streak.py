@@ -12,11 +12,15 @@ class SharedStreak(Base):
     user1_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user2_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    
     current_streak = Column(Integer, default=0)
-    max_streak = Column(Integer, default=0)
 
     # OJO: estaba escrito "las_day_checked"
     last_day_checked = Column(Date, nullable=True)
+    
+    # Nuevo: último día en que cada usuario cumplió un hábito
+    user1_last_day = Column(Date, nullable=True)
+    user2_last_day = Column(Date, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
